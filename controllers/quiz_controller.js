@@ -18,6 +18,12 @@ exports.load = function(req, res, next, quizId) {
 exports.show = function(req, res) {
 
 		res.render('quizes/show', {quiz: req.quiz, errors: []});
+
+		if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+		}
 };
 
 // GET /quizes/:id/answer
@@ -27,7 +33,15 @@ var resultado = 'Incorrecto';
 	if (req.query.respuesta === req.quiz.respuesta) {
 		resultado = 'Correcto';
 	}
-		res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});	
+
+	res.render('quizes/answer', {quiz: req.quiz, respuesta: resultado, errors: []});	
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+		}
+
 };
 
 // GET /quizes
@@ -42,6 +56,12 @@ exports.index = function(req, res) {
 	models.Quiz.findAll({where: ["pregunta like ?", search]}).then(function(quizes) {
 		res.render('quizes/index', {quizes: quizes, errors: []});
 	})
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };
 
 exports.new = function(req, res) {
@@ -49,6 +69,12 @@ exports.new = function(req, res) {
 		{ pregunta: "pregunta", respuesta: "respuesta" });
 
 	res.render('quizes/new', {quiz: quiz, errors: []});
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };
 
 exports.create = function(req, res) {
@@ -62,12 +88,24 @@ exports.create = function(req, res) {
 			res.redirect('/quizes')})
 		}
 	});
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };
 
 exports.edit = function(req, res) {
 	var quiz = req.quiz;
 
 	res.render('quizes/edit', {quiz:quiz, errors: []});
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };
 
 exports.update = function(req, res) {
@@ -83,10 +121,22 @@ exports.update = function(req, res) {
 		}
 
 	});
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };
 
 exports.destroy = function (req, res) {
 	req.quiz.destroy().then( function() {
 		res.redirect('/quizes');
 	}).catch(function(error){next(error)});
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
+	}
 };

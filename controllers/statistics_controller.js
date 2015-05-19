@@ -33,18 +33,11 @@ exports.catar = function(req, res) {
 
 			res.render('quizes/statistics', {preguntas: preguntas, comentarios: comentarios, media: media, sin: sin, con: con, errors: []});
 		})
+	})
+
+	if (req.session.user) {
+			var d = new Date();
+			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+			req.session.user.hora = hora;
 	}
-)};
-
-exports.load = function(req, res, next) {
-
-
-
-
-
-	models.Quiz.findAll({
-		include: [{ model: models.Comment}]
-	}).then(function(quiz) {
-		next();
-	}).catch(function(error) {next(error)});
 };
