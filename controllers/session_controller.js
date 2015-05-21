@@ -28,7 +28,7 @@ exports.create = function(req, res) {
 		}
 		var d = new Date();
 		var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
-		req.session.user = {id:user.id, username:user.username, hora:hora};
+		req.session.user = {id:user.id, username:user.username, hora:hora, isAdmin:user.isAdmin};
 
 		res.redirect(req.session.redir.toString());
 	});
@@ -36,5 +36,5 @@ exports.create = function(req, res) {
 
 exports.destroy = function(req, res) {
 	delete req.session.user;
-	res.redirect(req.session.redir.toString());
+	res.redirect('/'); //req.session.redir.toString()
 };
