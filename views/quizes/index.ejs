@@ -14,9 +14,18 @@
         <td><a href="/quizes/<%= quizes[i].id %>/edit"><button>editar</button></a></td>
         <td><form method="post" action="/quizes/<%= quizes[i].id %>?_method=delete">
           <button type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">borrar</button>
-        </form></td>
-        <% } 
-      }%>
+        </form>
+        </td>
+        <td>
+        <%= quizes[i].esFav%>
+        <% }
+        if (quizes[i].esFav) { %>
+          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id%>?_method=delete"><input type="image" onClick="return confirm('Desfavoritear: <%= quizes[i].pregunta %>');" src="/dorada.ico"/></form>
+        <% } else { %>
+         <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id %>?_method=put"><input type="image" src="/gris.ico"/></form>
+         <%} %>
+       </td>
+      <% }%>
       </tr>
       <% } %>
     </table><p>

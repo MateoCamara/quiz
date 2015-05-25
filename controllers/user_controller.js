@@ -13,8 +13,8 @@ exports.ownershipRequired = function(req, res, next) {
 };
 
 exports.load = function(req, res, next, userId) {
-	models.User.find({ where: { id: Number(userId)}})
-	.then(function(user){
+	console.log("ESTA ENTRANDO EN ESTE METODO (1)");
+	models.User.find({ where: { id: Number(userId)}}).then(function(user){
 		if (user) {
 			req.user = user;
 			next();

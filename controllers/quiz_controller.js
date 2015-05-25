@@ -27,14 +27,12 @@ exports.load = function(req, res, next, quizId) {
 
 // GET /quizes/:id
 exports.show = function(req, res) {
-
-		res.render('quizes/show', {quiz: req.quiz, errors: []});
-
-		if (req.session.user) {
+	if (req.session.user) {
 			var d = new Date();
 			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
 			req.session.user.hora = hora;
-		}
+	}
+	res.render('quizes/show', {quiz: req.quiz, errors: []});
 };
 // GET /quizes/:id/answer
 exports.answer = function(req, res) {
@@ -55,28 +53,68 @@ var resultado = 'Incorrecto';
 };
 
 // GET /quizes
-exports.index = function(req, res) {
-	if (req.query.search !== undefined) {
-		var search = req.query.search.replace(/\s/, '%');
-		search = "%"+search+"%";
-		models.Quiz.findAll({where: ["pregunta like ?", search]}).then(function(quizes) {
-		res.render('quizes/index', {quizes: quizes, errors: []});
-		})
-	}
-
-	var options = {};
+exports.index = function(req, res, next) {
+	//Si hay un usuario ON
 	if (req.user) {
-			var d = new Date();
-			var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
-			req.session.user.hora = hora;
-
-			options.where = {UserId: req.user.id}
-	}
-
-	models.Quiz.findAll(options).then(
-		function(quizes){
-			res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+		console.log("Usuario ON");
+		var options = {};
+		//Actualizar hora (auto LogOut)
+		var d = new Date();
+		var hora = d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+		req.session.user.hora = hora;
+		//Mis preguntas
+		options.where = {UserId: req.user.id}
+		//Favs+search
+		models.User.find({where: { id: req.session.user.id}}).then(function(usuario){
+			models.Quiz.findAll(options).then(function(quizes){
+				if (req.query.search !== undefined) { //Si hay un search
+					var search = req.query.search.replace(/\s/, '%');
+					search = "%"+search+"%";
+					quizes.findAll({where: ["pregunta like ?", search]}).then(function(quizzes) {
+						usuario.getQuizFavs().then(function (favoritos){
+							for (var i = 0; i<quizzes.length; i++){
+								for (var j = 0; j < favoritos.length; j++){
+									if (quizzes[i].id === favoritos[j].id){
+										quizzes[i].esFav = true;
+									}
+								}
+							}
+						});
+						res.render('quizes/index', {quizes: quizzes, errors: []});
+					});
+				}
+				else {
+					usuario.getQuizFavs().then(function (favoritos){
+							for (var i = 0; i<quizes.length; i++){
+								for (var j = 0; j < favoritos.length; j++){
+									if (quizes[i].id === favoritos[j].id){
+										quizes[i].esFav = true;
+									}
+								}
+							}
+					res.render('quizes/index', {quizes: quizes, errors: []});
+					});
+				}
+			});
 		}).catch(function(error) {next(error)});
+	}
+	else{
+		console.log("Usuario OFF");
+		//No hay nadie ON pero hay search
+		if (req.query.search !== undefined) { //Si hay un search
+			var search = req.query.search.replace(/\s/, '%');
+			search = "%"+search+"%";
+			models.Quiz.findAll({where: ["pregunta like ?", search]}).then(function(quizes) {
+				res.render('quizes/index', {quizes: quizes, errors: []});
+			})
+		}
+		else{
+			//No hay nadie ON ni search
+			models.Quiz.findAll().then(function(quizes){
+				res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+			});
+		}
+	}
 };
 
 exports.new = function(req, res) {

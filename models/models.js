@@ -40,6 +40,9 @@ Quiz.hasMany(Comment);
 Quiz.belongsTo(User);
 User.hasMany(Quiz);
 
+User.belongsToMany(Quiz, {through: 'Favourites', as: 'QuizFavs'});
+Quiz.belongsToMany(User, {through: 'Favourites', as: 'UsFavs'});
+
 exports.Quiz = Quiz; // exportar definición de la tabla Quiz
 exports.Comment = Comment;
 exports.User = User;
