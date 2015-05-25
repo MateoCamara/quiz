@@ -14,7 +14,7 @@ exports.catar = function(req, res) {
 
 			//media
 			if (preguntas === 0){
-				media = "no";
+				media = " No hay preguntas";
 			}
 			else {media = comentarios/preguntas;}
 
