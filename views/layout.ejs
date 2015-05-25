@@ -33,7 +33,11 @@
 
     <nav class="main" id="n1" role="navigation">
       <span><a href="/">Inicio</a></span>
-      <span><a href="/quizes">Preguntas</a></span>
+      <%if(!session.user){%>
+        <span><a href="/quizes">Preguntas</a></span>
+      <%} else{%>
+        <span><a href="/quizes/user/<%=session.user.id%>">Preguntas</a></span>
+      <%}%>
       <span><a href="/author">Créditos</a></span>
       <span><a href="/quizes/statistics">Estadísticas</a></span>
       <%if(session.user){%>

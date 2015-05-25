@@ -14,12 +14,16 @@
       <input type="text" name="respuesta" value="Respuesta" />
       <input type="submit" value="Enviar">
     </form><br>
-    <%= quiz.esFav%>
+    <%if (session.user){%>
         <% if (quiz.esFav) { %>
-          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quiz.id%>?_method=delete"><button type="submit" onClick="return confirm('Desfavoritear: <%= quiz.pregunta %>');"><img src="/dorada.ico"></button></form>
+          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quiz.id%>?_method=delete">
+            <input type="image" onClick="return confirm('Desfavoritear: <%= quiz.pregunta %>');" src="/dorada.ico"/>
+          </form>
         <% } else { %>
-         <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quiz.id %>?_method=put"><button type="submit"><img src="/gris.ico"></button></form>
-         <%} %>
+          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quiz.id %>?_method=put">
+            <input type="image" src="/gris.ico"/>
+          </form>
+         <%} } %>
 
     <p><a href="/quizes/<%= quiz.id %>/comments/new"><button>Nuevo comentario</button></a></p>
 

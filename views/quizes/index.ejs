@@ -8,21 +8,27 @@
   <body>
     <table>
       <% var i; for (i=0; i < quizes.length; i++) { %>
-      <tr><td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
-        <%if(session.user){
-          if (session.user.isAdmin || session.user.id === quizes[i].UserId) {%>
+      <tr>
+        <% if (!session.user){%>
+        <td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+        <%} else{%>
+        <td><a href="/quizes/user/<%= session.user.id%>/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+          <%if (session.user.isAdmin || session.user.id === quizes[i].UserId) {%>
         <td><a href="/quizes/<%= quizes[i].id %>/edit"><button>editar</button></a></td>
         <td><form method="post" action="/quizes/<%= quizes[i].id %>?_method=delete">
           <button type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">borrar</button>
         </form>
         </td>
+        <% }%>
         <td>
-        <%= quizes[i].esFav%>
-        <% }
-        if (quizes[i].esFav) { %>
-          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id%>?_method=delete"><input type="image" onClick="return confirm('Desfavoritear: <%= quizes[i].pregunta %>');" src="/dorada.ico"/></form>
+        <%if (quizes[i].esFav) { %>
+          <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id%>?_method=delete">
+            <input type="image" onClick="return confirm('Desfavoritear: <%= quizes[i].pregunta %>');" src="/dorada.ico"/>
+          </form>
         <% } else { %>
-         <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id %>?_method=put"><input type="image" src="/gris.ico"/></form>
+         <form method="post" action="/user/<%= session.user.id%>/favourites/<%= quizes[i].id %>?_method=put">
+          <input type="image" src="/gris.ico"/>
+        </form>
          <%} %>
        </td>
       <% }%>
@@ -31,11 +37,18 @@
     </table><p>
     <%if(session.user){%>
     <a href="/quizes/new"><button type="button">Crear pregunta</button></a>
-    <% } %>
+    <% } if(session.user){%>
+    <form method="get" action="/quizes/user/<%=session.user.id%>">
+      Busqueda de parámetro<br>
+      <input type="text" name="search" value="Buscar" />
+      <input type="submit" value="Enviar">
+    </form>
+    <%} else{%>
     <form method="get" action="/quizes">
       Busqueda de parámetro<br>
       <input type="text" name="search" value="Buscar" />
       <input type="submit" value="Enviar">
     </form>
+    <%}%>
   </body>
 </html>

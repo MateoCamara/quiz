@@ -38,10 +38,12 @@ router.get('/user/:userId(\\d+)/quizes', quizController.index);
 router.get('/quizes/statistics', statisticsController.catar);
 
 router.get('/quizes', quizController.index);
-router.get('/quizes/:quizId(\\d+)', 		quizController.show);
+router.get('/quizes/user/:userId(\\d+)', sessionController.loginRequired, quizController.index);
+router.get('/quizes/user/:userId(\\d+)/:quizId(\\d+)', sessionController.loginRequired, quizController.show);
+router.get('/quizes/:quizId(\\d+)', quizController.show);
 router.get('/quizes/:quizId(\\d+)/answer', 	quizController.answer);
 router.get('/quizes/new', 	sessionController.loginRequired, quizController.new);
-router.post('/quizes/create', sessionController.loginRequired, multer({dest: './public/media/'}), quizController.create);
+router.post('/quizes/:userId(\\d+)/create', sessionController.loginRequired, multer({dest: './public/media/'}), quizController.create);
 router.get('/quizes/:quizId(\\d+)/edit', sessionController.loginRequired, quizController.ownershipRequired, quizController.edit);
 router.put('/quizes/:quizId(\\d+)', sessionController.loginRequired, multer({dest: './public/media/'}), quizController.ownershipRequired, quizController.update);
 router.delete('/quizes/:quizId(\\d+)', sessionController.loginRequired, quizController.ownershipRequired, quizController.destroy);
