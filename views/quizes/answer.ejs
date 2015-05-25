@@ -8,7 +8,11 @@
   <body>
     <p>
       <%= respuesta %>
-      <a href="/quizes/<%= quiz.id %>"> Volver. </a>
+      <% if (!session.user) {%>
+        <a href="/quizes/<%= quiz.id %>"> Volver. </a>
+      <%} else { %>
+       <a href="/quizes/user/<%=session.user.id%>"> Volver. </a>      
+      <%}%>
     </p>
   </body>
 </html>
